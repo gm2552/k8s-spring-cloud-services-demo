@@ -5,7 +5,7 @@ metadata:
   name: atm
 spec:
   acceptedServiceBindings:
-  - name: registry
+  - name: eureka
     types:
     - eureka
   build:

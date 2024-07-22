@@ -5,7 +5,7 @@ metadata:
   name: atm-locator
 spec:
   acceptedServiceBindings:
-  - name: registry
+  - name: eureka
     types:
     - eureka
   - name: config

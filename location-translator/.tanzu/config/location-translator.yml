@@ -5,12 +5,9 @@ metadata:
   name: location-translator
 spec:
   acceptedServiceBindings:
-  - name: registry
+  - name: eureka
     types:
     - eureka
-  - name: config
-    types:
-    - config
   build:
     buildpacks: {}
     nonSecretEnv:
