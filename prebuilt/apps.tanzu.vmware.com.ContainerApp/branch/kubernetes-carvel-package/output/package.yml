@@ -1,0 +1,31 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  annotations:
+    apps.tanzu.vmware.com/promotable: ""
+    apps.tanzu.vmware.com/promote-group: ContainerApp/branch
+  creationTimestamp: null
+  name: branch.apps.local.20240722.1214.3609
+spec:
+  refName: branch.apps.local
+  releasedAt: "2024-07-22T12:18:24Z"
+  template:
+    spec:
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait=false
+      fetch:
+      - imgpkgBundle:
+          image: reg.perfect300rock.com/tapdev/branch@sha256:83de90379da13f2056326a3d0f10f01ed6b8d80b10263f83530bd548c0d7f410
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+  valuesSchema:
+    openAPIv3: null
+  version: 20240722.1214.3609

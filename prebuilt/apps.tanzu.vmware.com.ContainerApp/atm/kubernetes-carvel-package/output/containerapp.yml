@@ -1,0 +1,88 @@
+apiVersion: apps.tanzu.vmware.com/v1
+kind: ContainerApp
+metadata:
+  annotations:
+    apps.tanzu.vmware.com/promotable: ""
+    apps.tanzu.vmware.com/promote-group: ContainerApp/atm
+    containerapp.apps.tanzu.vmware.com/class: kubernetes
+  name: atm
+spec:
+  acceptedServiceBindings:
+  - name: eureka
+    types:
+    - eureka
+  content:
+    buildTimestamp: "2024-07-22T12:14:03Z"
+    gitCommit: 8cb957fd83fa5cb3e1bcd423fc1b4bae5c80b0ae-dirty
+    gitURL: github.com/gm2552/k8s-spring-cloud-services-demo.git
+    packageRefName: atm.apps.local
+    summary: git:8cb957f @ 2024-07-22T12:14:03Z
+    version: 20240722.1214.3609
+  image: reg.perfect300rock.com/tapdev/atm@sha256:a39d7f990c039095c8488671b003e041f66a3ba71e5835b41cc02df5102891b2
+  nonSecretEnv:
+  - name: JAVA_TOOL_OPTIONS
+    value: -Dmanagement.endpoint.health.probes.add-additional-paths=true -Dmanagement.health.probes.enabled=true
+      -Dserver.port=8080
+  ports:
+  - name: main
+    port: 8080
+  probes:
+    liveness:
+      httpGet:
+        path: /livez
+        port: 8080
+        scheme: HTTP
+    readiness:
+      httpGet:
+        path: /readyz
+        port: 8080
+        scheme: HTTP
+    startup:
+      failureThreshold: 120
+      httpGet:
+        path: /readyz
+        port: 8080
+        scheme: HTTP
+      initialDelaySeconds: 1
+      periodSeconds: 1
+  relatedRefs:
+  - for: kubernetes.list-replicas
+    kind: Pod
+    labelSelector: containerapp.apps.tanzu.vmware.com/app-name=atm
+  - apiGroup: apps
+    for: kubernetes.service-binding-target
+    kind: Deployment
+    name: atm
+  - for: kubernetes.service-target
+    kind: Service
+    name: atm
+  - for: kubernetes.scale-replicas
+    keyPath: .data['values.yml']->[yaml].replicas
+    kind: Secret
+    name: atm-values
+  - for: kubernetes.scale-resources
+    keyPath: .data['values.yml']->[yaml].resources
+    kind: Secret
+    name: atm-values
+  - for: kubernetes.set-secret-env
+    keyPath: .data['values.yml']->[yaml].secretEnv
+    kind: Secret
+    name: atm-values
+  - apiGroup: packaging.carvel.dev
+    for: kubernetes.delete
+    kind: PackageInstall
+    name: atm
+  - apiGroup: data.packaging.carvel.dev
+    for: kubernetes.delete
+    kind: Package
+    name: atm.apps.local.20240722.1214.3609
+  - for: kubernetes.delete
+    kind: Secret
+    name: atm-values
+  - for: kubernetes.set-content-hash
+    keyPath: .data['values.yml']->[yaml].contentHash
+    kind: Secret
+    name: atm-values
+  resources:
+    cpu: 300m
+    memory: 1Gi

@@ -1,0 +1,31 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  annotations:
+    apps.tanzu.vmware.com/promotable: ""
+    apps.tanzu.vmware.com/promote-group: ContainerApp/atm
+  creationTimestamp: null
+  name: atm.apps.local.20240722.1214.3609
+spec:
+  refName: atm.apps.local
+  releasedAt: "2024-07-22T12:17:42Z"
+  template:
+    spec:
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait=false
+      fetch:
+      - imgpkgBundle:
+          image: reg.perfect300rock.com/tapdev/atm@sha256:8a5a3df3f3a3cef4ed1108512f267d768de0ca22358e19ac6a3bb12a9d81f09e
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+  valuesSchema:
+    openAPIv3: null
+  version: 20240722.1214.3609

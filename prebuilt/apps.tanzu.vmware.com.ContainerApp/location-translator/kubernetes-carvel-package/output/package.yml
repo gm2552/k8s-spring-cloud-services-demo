@@ -1,0 +1,31 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  annotations:
+    apps.tanzu.vmware.com/promotable: ""
+    apps.tanzu.vmware.com/promote-group: ContainerApp/location-translator
+  creationTimestamp: null
+  name: location-translator.apps.local.20240722.1214.3609
+spec:
+  refName: location-translator.apps.local
+  releasedAt: "2024-07-22T12:19:04Z"
+  template:
+    spec:
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait=false
+      fetch:
+      - imgpkgBundle:
+          image: reg.perfect300rock.com/tapdev/location-translator@sha256:628dbadcab6ff99a831cd9260908071ec9ff01cbaaaf0a08b0e845a7293e8ac7
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+  valuesSchema:
+    openAPIv3: null
+  version: 20240722.1214.3609
