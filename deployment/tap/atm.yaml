@@ -1,0 +1,185 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: atm
+  annotations:
+    kapp.k14s.io/update-strategy: fallback-on-replace
+    ootb.apps.tanzu.vmware.com/servicebinding-workload: "true"
+    kapp.k14s.io/change-rule: upsert after upserting servicebinding.io/ServiceBindings
+  labels:
+    app.kubernetes.io/part-of: atm
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/component: run
+    carto.run/workload-name: atm
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: run
+      app.kubernetes.io/part-of: atm
+      apps.tanzu.vmware.com/auto-configure-actuators: "true"
+      apps.tanzu.vmware.com/workload-type: server
+      carto.run/workload-name: atm
+      conventions.carto.run/framework: spring-boot
+      services.conventions.carto.run/postgres: workload
+      tanzu.app.live.view: "true"
+      tanzu.app.live.view.application.actuator.path: actuator
+      tanzu.app.live.view.application.actuator.port: "8081"
+      tanzu.app.live.view.application.flavours: spring-boot
+      tanzu.app.live.view.application.name: atm
+  template:
+    metadata:
+      annotations:
+        apps.tanzu.vmware.com/correlationid: reg.perfect300rock.com/tapdev/lsp-source:workloads-atm?sub_path=/
+        boot.spring.io/actuator: http://:8081/actuator
+        boot.spring.io/version: 3.3.1
+        conventions.carto.run/applied-conventions: |-
+          spring-boot-convention/auto-configure-actuators-check
+          spring-boot-convention/is-native-app-check
+          spring-boot-convention/is-prometheus-enabled-check
+          spring-boot-convention/spring-boot
+          spring-boot-convention/spring-boot-web
+          spring-boot-convention/spring-boot-actuator
+          spring-boot-convention/spring-boot-actuator-probes
+          spring-boot-convention/app-live-view-appflavour-check
+          spring-boot-convention/app-live-view-connector-boot
+          spring-boot-convention/app-live-view-appflavours-boot
+          spring-boot-convention/service-intent-postgres
+        developer.conventions/target-containers: workload
+        local-source-proxy.apps.tanzu.vmware.com: reg.perfect300rock.com/tapdev/lsp-source:workloads-atm@sha256:aac165b58f8ab0e015dedc971803f4a1f36ff3974b569d5f20b3cacec231a9de
+        services.conventions.carto.run/postgres: postgresql/42.7.3
+      labels:
+        app.kubernetes.io/component: run
+        app.kubernetes.io/part-of: atm
+        apps.tanzu.vmware.com/auto-configure-actuators: "true"
+        apps.tanzu.vmware.com/workload-type: server
+        carto.run/workload-name: atm
+        conventions.carto.run/framework: spring-boot
+        services.conventions.carto.run/postgres: workload
+        tanzu.app.live.view: "true"
+        tanzu.app.live.view.application.actuator.path: actuator
+        tanzu.app.live.view.application.actuator.port: "8081"
+        tanzu.app.live.view.application.flavours: spring-boot
+        tanzu.app.live.view.application.name: atm
+    spec:
+      containers:
+      - env:
+        - name: spring_profiles_active
+          value: eureka
+        - name: JAVA_TOOL_OPTIONS
+          value: -Dmanagement.endpoint.health.probes.add-additional-paths="true" -Dmanagement.endpoint.health.show-details="always" -Dmanagement.endpoints.web.base-path="/actuator" -Dmanagement.endpoints.web.exposure.include="*" -Dmanagement.health.probes.enabled="true" -Dmanagement.server.port="8081" -Dserver.port="8080"
+        image: reg.perfect300rock.com/tapdev/supply-chain/atm-workloads@sha256:9226b4f1db9b2cbac1e269fdc87cccbfb260a552f5cd692885efe0f699bbfa82
+        startupProbe:
+          httpGet:
+            path: /livez
+            port: 8080
+            scheme: HTTP
+          failureThreshold: 30
+          periodSeconds: 10        
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: 8080
+            scheme: HTTP
+        name: workload
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+            scheme: HTTP
+        resources:
+          limits:
+            cpu: 1500m
+            memory: 750M
+          requests:
+            cpu: 100m
+            memory: 500M
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+          seccompProfile:
+            type: RuntimeDefault
+        startupProbe:
+          httpGet:
+            path: /readyz
+            port: 8080
+            scheme: HTTP
+      serviceAccountName: default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: atm
+  labels:
+    app.kubernetes.io/part-of: atm
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/component: run
+    carto.run/workload-name: atm
+spec:
+  selector:
+    app.kubernetes.io/component: run
+    app.kubernetes.io/part-of: atm
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+    apps.tanzu.vmware.com/workload-type: server
+    carto.run/workload-name: atm
+    conventions.carto.run/framework: spring-boot
+    services.conventions.carto.run/postgres: workload
+    tanzu.app.live.view: "true"
+    tanzu.app.live.view.application.actuator.path: actuator
+    tanzu.app.live.view.application.actuator.port: "8081"
+    tanzu.app.live.view.application.flavours: spring-boot
+    tanzu.app.live.view.application.name: atm
+  ports:
+  - targetPort: 8080
+    port: 8080
+    name: "8080"
+  - targetPort: 8080
+    port: 80
+    name: http
+---
+apiVersion: kapp.k14s.io/v1alpha1
+kind: Config
+waitRules:
+- conditionMatchers:
+  - type: ServiceAvailable
+    status: "False"
+    failure: true
+  - type: ServiceAvailable
+    status: "True"
+    success: true
+  resourceMatchers:
+  - apiVersionKindMatcher:
+      apiVersion: servicebinding.io/v1alpha3
+      kind: ServiceBinding
+---
+apiVersion: servicebinding.io/v1alpha3
+kind: ServiceBinding
+metadata:
+  name: atm-registry
+  annotations:
+    local-source-proxy.apps.tanzu.vmware.com: reg.perfect300rock.com/tapdev/lsp-source:workloads-atm@sha256:aac165b58f8ab0e015dedc971803f4a1f36ff3974b569d5f20b3cacec231a9de
+    kapp.k14s.io/change-group: servicebinding.io/ServiceBindings
+  labels:
+    app.kubernetes.io/part-of: atm
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/component: run
+    carto.run/workload-name: atm
+spec:
+  name: registry
+  service:
+    apiVersion: service-registry.spring.apps.tanzu.vmware.com/v1alpha1
+    kind: EurekaServer
+    name: registry-atm-locator
+  workload:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: atm

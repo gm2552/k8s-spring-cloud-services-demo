@@ -1,0 +1,46 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: atm-locator
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/part-of: atm-locator
+    apis.apps.tanzu.vmware.com/register-api: "true"
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+spec:
+  env:
+  - name: spring_profiles_active
+    value: eureka
+  build:
+    env:
+      - name: BP_JVM_VERSION
+        value: "21"
+  params:
+  - name: annotations
+    value:
+        autoscaling.knative.dev/minScale: "1"
+  - name: api_descriptor
+    value:
+      type: openapi
+      location: 
+        path: "/api-docs"
+      owner: atm
+      system: atm
+      description: ATM Locator API
+  serviceClaims:
+  - name: registry
+    ref:
+      apiVersion: service-registry.spring.apps.tanzu.vmware.com/v1alpha1
+      kind: EurekaServer
+      name: registry-atm-locator
+  - name: config
+    ref:
+      apiVersion: config-server.spring.tanzu.vmware.com/v1alpha1
+      kind: ConfigServer
+      name: config-atm-locator
+  source:
+    git:
+      url: https://gitlab.eng.vmware.com/tap-scenario-apps/atm-locator-backend
+      ref:
+        branch: main
+    subPath: atm-locator

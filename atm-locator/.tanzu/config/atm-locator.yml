@@ -1,0 +1,22 @@
+apiVersion: apps.tanzu.vmware.com/v1
+kind: ContainerApp
+metadata:
+  creationTimestamp: null
+  name: atm-locator
+spec:
+  acceptedServiceBindings:
+  - name: registry
+    types:
+    - eureka
+  - name: config
+    types:
+    - config
+  build:
+    nonSecretEnv:
+    - name: BP_JVM_VERSION
+      value: "21"    
+    buildpacks: {}
+    path: ../..
+  ports:
+  - name: main
+    port: 8080

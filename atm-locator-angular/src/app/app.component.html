@@ -1,0 +1,21 @@
+<!-- Refactor into individual components -->
+<app-header></app-header>
+
+<div class="container">
+  
+  <mat-card *ngIf="show">
+    <mat-card-header>
+      <h1>Find an ATM near you</h1>
+    </mat-card-header>
+    <h3>Search by zip code OR city and state</h3>
+    <mat-card-content>
+     <app-locator-form (sendLocations)="getLocations($event)"></app-locator-form>
+    </mat-card-content>
+  </mat-card>
+  <mat-card *ngIf="this.results.length > 0">
+    <mat-card-content>
+      <button mat-button color="primary" (click)="showSearch()"> &lt; New Search</button>
+      <app-map  [locations]="this.results"></app-map>
+      </mat-card-content>
+  </mat-card>
+</div>

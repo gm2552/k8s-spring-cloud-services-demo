@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: atm_locator_api
+          uri: http://localhost:8083
+          predicates:
+          - Path=/atmsearch
+          - Method=GET
+          filters:
+          - StripPrefix=0
+        - id: atm_locator_frontend
+          uri: http://localhost:4200
+          predicates:
+          - Path=/**
+          - Method=GET
+          order: 1000
+          filters:
+          - StripPrefix=0

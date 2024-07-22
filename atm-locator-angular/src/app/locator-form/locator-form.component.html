@@ -1,0 +1,32 @@
+<form [formGroup]="locationForm" (ngSubmit)="onSubmit(this.locationForm.value)">
+
+<mat-form-field>
+    <mat-label for="address">Address</mat-label>
+    <input matInput type="text" id="address" name="address" formControlName="address">
+</mat-form-field> 
+
+<mat-form-field>
+    <mat-label for="city">City</mat-label>
+    <input matInput type="text" id="city" name="city" formControlName="city">
+</mat-form-field>
+
+<mat-form-field>
+    <mat-label for="state">State</mat-label>
+    <input matInput type="text" id="state" name="state" formControlName="state">
+</mat-form-field>
+
+<mat-form-field>
+    <mat-label for="postalCode">Zip Code</mat-label>
+    <input matInput type="text" id="postalCode" name="postalCode" formControlName="postalCode">
+</mat-form-field>
+
+<mat-label for="radius">Search Radius</mat-label>
+  <mat-select id="radius" name="radius" formControlName="radius">
+    <mat-option *ngFor="let display of radius" [value]="display.value" >
+      {{display.value}}
+    </mat-option>
+  </mat-select>
+
+<button type="submit" mat-stroked-button color="primary">Search</button>
+
+</form>

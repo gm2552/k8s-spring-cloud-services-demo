@@ -1,0 +1,52 @@
+---
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayMapping
+metadata:
+  name: atm-locator-backend
+spec:
+  gatewayRef:
+    name: spring-cloud-gateway
+  routeConfigRef:
+    name: atm-locator-backend  
+---
+apiVersion: tanzu.vmware.com/v1
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: atm-locator-backend
+spec:
+  routes:
+  - uri: http://atm-locator:8080/
+    predicates:
+    - Path=/atmsearch
+    - Method=GET
+    filters:
+    - StripPrefix=0
+    tags:
+    - amtsearch
+---
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayMapping
+metadata:
+  name: atm-locator-frontend
+spec:
+  gatewayRef:
+    name: spring-cloud-gateway
+  routeConfigRef:
+    name: atm-locator-frontend
+---
+apiVersion: tanzu.vmware.com/v1
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: atm-locator-frontend
+spec:
+  routes:
+  - uri: http://atm-locator-angular:8080/
+    predicates:
+    - Path=/**
+    - Method=GET
+    order: 1000
+    filters:
+    - StripPrefix=0
+    tags:
+    - frontend
+

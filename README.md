@@ -50,8 +50,8 @@ The high level architecture looks like the following:
 
 Each section below describes usage scenarios for each of the environments:
 
-* [Local Dev]
-* [TAP]
-* [TP For K8s]
+* [Local Dev](doc/LocalDev.md)
+* [TAP](doc/TAP.md)
+* [TP For K8s](doc/TP4K8s.md)
 
 

@@ -1,0 +1,42 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: atm
+  labels:
+    apps.tanzu.vmware.com/workload-type: server
+    app.kubernetes.io/part-of: atm
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+spec:
+  env:
+  - name: spring_profiles_active
+    value: eureka
+  params:
+  - name: ports
+    value:
+    - port: 80
+      containerPort: 8080
+      name: http
+  resources:     
+    requests:         
+      memory: "500M"
+      cpu: "100m"
+    limits:         
+      memory: "750M"
+      cpu: "1500m"         
+  build:
+    env:
+      - name: BP_JVM_VERSION
+        value: "21"
+  serviceClaims:
+  - name: registry
+    ref:
+      apiVersion: service-registry.spring.apps.tanzu.vmware.com/v1alpha1
+      kind: EurekaServer
+      name: registry-atm-locator
+  source:
+    git:
+      url: https://gitlab.eng.vmware.com/tap-scenario-apps/atm-locator-backend
+      ref:
+        branch: main
+    subPath: atm
+ 

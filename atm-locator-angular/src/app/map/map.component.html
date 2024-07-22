@@ -1,0 +1,21 @@
+
+<div *ngIf="apiLoaded | async">
+    <google-map 
+    [center]="center"
+    [zoom]="zoom"
+    (mapClick)="removeInfo()">
+        <map-marker #marker="mapMarker" 
+            *ngFor="let markerPosition of markerPositions; let i = index"
+            [position]="markerPosition"
+            [options]="markerOptions"
+            [clickable]="click"
+            (mapClick)="openInfoWindow(marker, i)">
+        </map-marker>
+        <map-info-window>
+            <h2>{{title}}</h2>
+            <p>{{addr}}</p>
+            <p>{{city}}, {{state}} </p>
+            <p>{{zip}}</p>
+        </map-info-window>
+    </google-map>
+</div>

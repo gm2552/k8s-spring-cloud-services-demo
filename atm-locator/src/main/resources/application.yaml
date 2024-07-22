@@ -1,0 +1,57 @@
+---
+
+server:
+  forward-headers-strategy: framework
+  port: 8083
+  
+services:
+  location-transation:
+    identifier:  'http://location-translator'
+  atm:
+    identifier:  'http://atm'
+  branch:
+    identifier:  'http://branch'
+
+spring:
+  cache:
+    cache-names: geolocation
+    caffeine:
+      spec: maximumSize=100,expireAfterAccess=3600s
+
+  application:
+    name: atm-locator
+
+  config:
+    import: 'optional:configserver:'
+
+springdoc:
+  packages-to-scan: com.example.tanzu.atmloc.resources
+  api-docs.path: '/api-docs'
+
+eureka:
+  client:
+    enabled: false
+
+---
+
+spring:
+  config.activate.on-profile: eureka
+  
+eureka:
+ client:
+   enabled: true
+
+---
+
+spring:
+  config.activate.on-cloud-platform: none
+  
+services:
+  location-transation:
+    identifier:  'http://localhost:8081'
+  atm:
+    identifier:  'http://localhost:8082'
+  branch:
+    identifier:  'http://localhost:8085'  
+
+

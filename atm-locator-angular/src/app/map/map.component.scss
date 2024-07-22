@@ -1,0 +1,16 @@
+mat-card-content {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    min-height: 800px;
+}
+
+mat-card {
+    margin-top: 50px;
+    padding-top: 50px;
+}
+
+::ng-deep .map-container {
+    width: 85vw !important;
+    height: 700px !important;
+}

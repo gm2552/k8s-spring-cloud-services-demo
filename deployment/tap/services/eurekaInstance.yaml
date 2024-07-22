@@ -1,0 +1,10 @@
+apiVersion: service-registry.spring.apps.tanzu.vmware.com/v1alpha1
+kind: EurekaServer
+metadata:
+  name: registry-atm-locator
+  labels:
+    services.apps.tanzu.vmware.com/class: registry-atm-locator
+spec:
+  replicas: 1
+  tls:
+    activated: true

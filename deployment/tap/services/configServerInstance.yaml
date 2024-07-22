@@ -1,0 +1,13 @@
+apiVersion: config-server.spring.tanzu.vmware.com/v1alpha1
+kind: ConfigServer
+metadata:
+  name: config-atm-locator
+  labels:
+    services.apps.tanzu.vmware.com/class: config-atm-locator
+spec:
+  tls:
+    activated: true
+  backends:
+  - git:
+      uri: https://github.com/gm2552/atm-locator-config
+      defaultLabel: main

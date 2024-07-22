@@ -1,0 +1,12 @@
+apiVersion: config.tanzu.vmware.com/v1
+kind: TanzuConfig
+children:
+- atm
+- branch
+- location-translator
+- atm-locator
+- atm-locator-angular
+configuration:
+  dev:
+    paths:
+    - .tanzu/config/

@@ -1,0 +1,68 @@
+apiVersion: carto.run/v1alpha1
+kind: Workload
+metadata:
+  name: atm-locator
+  labels:
+    apps.tanzu.vmware.com/workload-type: web
+    app.kubernetes.io/part-of: atm-locator
+    apis.apps.tanzu.vmware.com/register-api: "true"
+    apps.tanzu.vmware.com/auto-configure-actuators: "true"
+    apps.tanzu.vmware.com/has-tests: "true"
+spec:
+  env:
+  - name: MANAGEMENT_HEALTH_PROBES_ENABLED
+    value: "true"
+  - name: MANAGEMENT_ENDPOINT_HEALTH_PROBES_ADD_ADDITIONAL_PATHS
+    value: "true"
+  - name: MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS
+    value: always
+  - name: MANAGEMENT_ENDPOINTS_WEB_BASE_PATH
+    value: /actuator
+  - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+    value: '*'
+  - name: MANAGEMENT_SERVER_PORT
+    value: "8081"
+  - name: SERVER_PORT
+    value: "8080"
+  - name: ORG_SPRINGFRAMEWORK_CLOUD_BINDINGS_BOOT_ENABLE
+    value: "true"
+  build:
+    env:
+      - name: BP_JVM_VERSION
+        value: "17"
+      - name: BP_MAVEN_ACTIVE_PROFILES
+        value: native
+      - name: BP_NATIVE_IMAGE
+        value: "true"
+      - name: MANAGEMENT_HEALTH_PROBES_ENABLED
+        value: "true"
+      - name: MANAGEMENT_ENDPOINT_HEALTH_PROBES_ADD_ADDITIONAL_PATHS
+        value: "true"
+      - name: MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS
+        value: always
+      - name: MANAGEMENT_ENDPOINTS_WEB_BASE_PATH
+        value: /actuator
+      - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
+        value: '*'
+      - name: MANAGEMENT_SERVER_PORT
+        value: "8081"
+      - name: SERVER_PORT
+        value: "8080"        
+  params:
+  - name: annotations
+    value:
+        autoscaling.knative.dev/minScale: "1"
+  - name: api_descriptor
+    value:
+      type: openapi
+      location: 
+        path: "/api-docs"
+      owner: atm
+      system: atm
+      description: ATM Locator API
+  source:
+    git:
+      url: https://gitlab.eng.vmware.com/tap-scenario-apps/atm-locator-backend
+      ref:
+        branch: main
+    subPath: atm-locator

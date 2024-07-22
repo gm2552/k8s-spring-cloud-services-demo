@@ -1,0 +1,80 @@
+---
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGateway
+metadata:
+  name: atm-locator-gateway
+spec:
+  service:
+    type: ClusterIP
+  api:
+    title: ATM Locator API Gateway
+    description: The entrypoint for all things ATM Locator related
+    version: 1.0.0
+  env:
+    - name: spring.cloud.gateway.httpclient.connect-timeout
+      value: "90"
+---
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayMapping
+metadata:
+  name: atm-locator-backend
+spec:
+  gatewayRef:
+    name: atm-locator-gateway
+  routeConfigRef:
+    name: atm-locator-backend  
+---
+apiVersion: tanzu.vmware.com/v1
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: atm-locator-backend
+spec:
+  routes:
+  - uri: http://atm-locator:8080/
+    predicates:
+    - Path=/atmsearch
+    - Method=GET
+    filters:
+    - StripPrefix=0
+    tags:
+    - amtsearch
+---
+apiVersion: "tanzu.vmware.com/v1"
+kind: SpringCloudGatewayMapping
+metadata:
+  name: atm-locator-frontend
+spec:
+  gatewayRef:
+    name: atm-locator-gateway
+  routeConfigRef:
+    name: atm-locator-frontend
+---
+apiVersion: tanzu.vmware.com/v1
+kind: SpringCloudGatewayRouteConfig
+metadata:
+  name: atm-locator-frontend
+spec:
+  routes:
+  - uri: http://atm-locator-angular:8080/
+    predicates:
+    - Path=/**
+    - Method=GET
+    order: 1000
+    filters:
+    - StripPrefix=0
+    tags:
+    - frontend
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: atmlocator
+spec:
+  virtualhost:
+    fqdn: atmlocator.<MY DOMAIN>
+  routes:
+    - conditions:
+        - prefix: /
+      services:
+        - name: atm-locator-gateway
+          port: 80
