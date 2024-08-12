@@ -44,7 +44,7 @@ eureka:
 ---
 
 spring:
-  config.activate.on-cloud-platform: none
+  config.activate.on-profile: local
   
 services:
   location-transation:

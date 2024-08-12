@@ -39,8 +39,8 @@ Create instances of Eureka and Spring Cloud Config by running the following comm
 
 
 ```
-tanzu service create EurekaServer/atm-locator-eureka
-tanzu service create ConfigServer/atm-locator-config --parameter backends='[{git: {uri: "https://github.com/gm2552/atm-locator-config"}}]'
+tanzu service create EurekaServer/atm-registry-server
+tanzu service create ConfigServer/atm-locator-config --parameter backends='[{"git":{"uri":"https://github.com/gm2552/atm-locator-config"}}]' --parameter replicas=1
 ```
 
 Validate that the service instances have been created by running the following commnad:
@@ -106,5 +106,9 @@ the micro-services to the Spring Cloud Services from the root directory of this 
 
 
 ```
-tanzu service bind 
+tanzu service bind EurekaServer/atm-registry-server ContainerApp/atm --as eureka
+tanzu service bind EurekaServer/atm-registry-server ContainerApp/branch --as eureka
+tanzu service bind EurekaServer/atm-registry-server ContainerApp/location-translator --as eureka
+tanzu service bind EurekaServer/atm-registry-server ContainerApp/atm-locator --as eureka
+tanzu service bind ConfigServer/atm-locator-config ContainerApp/atm-locator --as config
 ```
