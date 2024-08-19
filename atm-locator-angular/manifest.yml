@@ -1,0 +1,7 @@
+applications:
+- name: atm-locator-angular
+  instances: 1
+  buildpack: staticfile_buildpack
+  path: dist/
+  memory: 256M
+  timeout: 180
